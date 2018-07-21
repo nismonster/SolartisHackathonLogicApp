@@ -1,0 +1,230 @@
+{
+    "$connections": {
+        "value": {
+            "adam-test-connector": {
+                "connectionId": "/subscriptions/b6d5d6dc-5821-47a6-9c53-72880e6d9a7b/resourceGroups/adam-test/providers/Microsoft.Web/connections/adam-test-connector",
+                "connectionName": "adam-test-connector",
+                "id": "/subscriptions/b6d5d6dc-5821-47a6-9c53-72880e6d9a7b/resourceGroups/adam-test/providers/Microsoft.Web/customApis/adam-test-connector"
+            },
+            "luis": {
+                "connectionId": "/subscriptions/b6d5d6dc-5821-47a6-9c53-72880e6d9a7b/resourceGroups/adam-test/providers/Microsoft.Web/connections/luis",
+                "connectionName": "luis",
+                "id": "/subscriptions/b6d5d6dc-5821-47a6-9c53-72880e6d9a7b/providers/Microsoft.Web/locations/eastus2/managedApis/luis"
+            },
+            "twitter": {
+                "connectionId": "/subscriptions/b6d5d6dc-5821-47a6-9c53-72880e6d9a7b/resourceGroups/adam-test/providers/Microsoft.Web/connections/twitter",
+                "connectionName": "twitter",
+                "id": "/subscriptions/b6d5d6dc-5821-47a6-9c53-72880e6d9a7b/providers/Microsoft.Web/locations/eastus2/managedApis/twitter"
+            }
+        }
+    },
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Create_Local_Variable_-_LUIS_Destination": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "LUIS-Destination-Extracted",
+                            "type": "String",
+                            "value": "@{body('HTTP_-_LUIS_Destination_Extraction_API')}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "HTTP_-_LUIS_Destination_Extraction_API": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Create_Local_Variable_-_LUIS_Origin": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "LUIS-Origin-Extracted",
+                            "type": "String",
+                            "value": "@{body('HTTP_-_LUIS_Origin_Extraction_API')}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "HTTP_-_LUIS_Origin_Extraction_API": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Get_Rate": {
+                "inputs": {
+                    "body": {
+                        "QuoteInformation": {
+                            "DepartureDate": "06/25/2017",
+                            "DepositDate": "06/03/2017",
+                            "DestinationCountry": "@variables('LUIS-Destination-Extracted')",
+                            "EventName": "InvokeRatingV2",
+                            "NumberOfRentalCars": "1",
+                            "OwnerId": "15",
+                            "PlanCode": "2",
+                            "PlanName": "Classic Plus",
+                            "PolicyEffectiveDate": "06/25/2017",
+                            "ProducerCode": "86201",
+                            "ProductID": "619",
+                            "ProductNumber": "ILT",
+                            "ProductVerID": "706",
+                            "ProductVerNumber": "1.0",
+                            "QuoteType": "New Business",
+                            "RentalEndDate": "06/31/2017",
+                            "RentalLimit": "35000",
+                            "RentalStartDate": "06/25/2017",
+                            "ReturnDate": "06/31/2017",
+                            "StateCode": "@variables('LUIS-Origin-Extracted')",
+                            "TravelerList": [
+                                {
+                                    "TravelCost": "2500",
+                                    "TravelerDOB": "02/14/1990"
+                                }
+                            ],
+                            "TripCancellationCoverage": "With Trip Cancellation"
+                        },
+                        "ServiceRequestDetail": {
+                            "LanguageCode": "en",
+                            "OwnerId": "15",
+                            "RegionCode": "US",
+                            "ResponseType": "JSON",
+                            "ServiceRequestVersion": "1.0",
+                            "ServiceResponseVersion": "1.0",
+                            "Token": "8Ic1Vuu04dYFhBBxE84KARCatEJl1qcRaSFl51SYwYK0KPeFU/zz3ksIjNOwffAqhP6XLVIa5+QQx69vuRWrppeif6MD99gHZizQYY+wvf5fprSOxcC4/Ruk3ckWOI62gSZWw8f63r/X+ggCSxzB0t0UQfzwVngT26J3VE5WcMsh3p301e043uA6BJecV8ZRW/3JUFt99Le69C04IZPjObo/QXsgdNszxihjvt0u8qI5yD6X6WpsxJkDEeV2NogeFBMi7VgrkfcLTORbW1hyG84/255iwiuqW/B6R/Xw6g9/zVF8FvX/Cwf3fqAj6d3VLJwj+QMLrdo+5qt50IWnIO8TeejpRCU6lfm8jOFrAUmFLvkQol24nNJMfpARRFtMuV48IsB1MOrCTYD+9LHpOgXoVCJMtieVqXP63nEVTNE4PeJfO201aWe8l8szYf95xk57H7IThIv0KsJKS+K79DQsAzSJh147Kxfj6ZERWul1dot0GnP4twrqj+9UOILsDmiz7ub/GfDyMwShBviZZoZPsexno7See7vOxCFTl+csxGWgyVOpZZAfHXEy+rlla2+FAV3T97ss7Y8fUTR5Nx9+R8/N8WhDDTHHSOCTvJEpHyfLbkCXC3xugNodHvv6QdiK8SUsHmDB8mbGjtBgAn/iHl17H+OrvmzXkTz/CXMHmF06lpsNQJDPZoJeC8SvchE5t/Ekp4fqPjk6HA0O+w1SrSxK6rswJwzb0fUwm5UHmF06lpsNQJDPZoJeC8SvX69VrO5KnrGS+LO58jgzyhFWrIEbR9fycyC+zWxNjDjaSY2gwX5f15wL3njJx1S8SNt08KzFbMnndpC25Z8SCT8aAu/o5LapebGM3811OvMi4tVTG741ICt+8LAPcXfN9EQfC6v6J8s9i8F4twZQkjPQ8chDBqFlfnDt/T8xQXPLQYFezCZL4Bhg207HeKOmwO2zuWt6wRejdH0Zy8TXoA==",
+                            "UserName": "travelagent"
+                        }
+                    },
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "EventName": "InvokeRatingV2",
+                        "Token": "8Ic1Vuu04dYFhBBxE84KARCatEJl1qcRaSFl51SYwYK0KPeFU/zz3ksIjNOwffAqhP6XLVIa5+QQx69vuRWrppeif6MD99gHZizQYY+wvf5fprSOxcC4/Ruk3ckWOI62gSZWw8f63r/X+ggCSxzB0t0UQfzwVngT26J3VE5WcMsh3p301e043uA6BJecV8ZRW/3JUFt99Le69C04IZPjObo/QXsgdNszxihjvt0u8qI5yD6X6WpsxJkDEeV2NogeFBMi7VgrkfcLTORbW1hyG84/255iwiuqW/B6R/Xw6g9/zVF8FvX/Cwf3fqAj6d3VLJwj+QMLrdo+5qt50IWnIO8TeejpRCU6lfm8jOFrAUmFLvkQol24nNJMfpARRFtMuV48IsB1MOrCTYD+9LHpOgXoVCJMtieVqXP63nEVTNE4PeJfO201aWe8l8szYf95xk57H7IThIv0KsJKS+K79DQsAzSJh147Kxfj6ZERWul1dot0GnP4twrqj+9UOILsDmiz7ub/GfDyMwShBviZZoZPsexno7See7vOxCFTl+csxGWgyVOpZZAfHXEy+rlla2+FAV3T97ss7Y8fUTR5Nx9+R8/N8WhDDTHHSOCTvJEpHyfLbkCXC3xugNodHvv6QdiK8SUsHmDB8mbGjtBgAn/iHl17H+OrvmzXkTz/CXMHmF06lpsNQJDPZoJeC8SvchE5t/Ekp4fqPjk6HA0O+w1SrSxK6rswJwzb0fUwm5UHmF06lpsNQJDPZoJeC8SvX69VrO5KnrGS+LO58jgzyhFWrIEbR9fycyC+zWxNjDjaSY2gwX5f15wL3njJx1S8SNt08KzFbMnndpC25Z8SCT8aAu/o5LapebGM3811OvMi4tVTG741ICt+8LAPcXfN9EQfC6v6J8s9i8F4twZQkjPQ8chDBqFlfnDt/T8xQXPLQYFezCZL4Bhg207HeKOmwO2zuWt6wRejdH0Zy8TXoA=="
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['adam-test-connector']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/FireEventV2"
+                },
+                "runAfter": {
+                    "Create_Local_Variable_-_LUIS_Destination": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Get_prediction": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['luis']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/luis/v2.0/apps/@{encodeURIComponent('b90f7fc3-184b-4ed5-9204-03aadeef1b10')}/",
+                    "queries": {
+                        "desiredIntent": "GetTravelQuote",
+                        "q": "@triggerBody()?['TweetText']",
+                        "verbose": true
+                    }
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            },
+            "HTTP_-_LUIS_Destination_Extraction_API": {
+                "inputs": {
+                    "body": "@body('Get_prediction')",
+                    "method": "POST",
+                    "uri": "http://adam-test.azurewebsites.net/LUISExtractDestination"
+                },
+                "runAfter": {
+                    "Create_Local_Variable_-_LUIS_Origin": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_-_LUIS_Origin_Extraction_API": {
+                "inputs": {
+                    "body": "@body('Get_prediction')",
+                    "method": "POST",
+                    "uri": "http://adam-test.azurewebsites.net/LUISExtractOrigin"
+                },
+                "runAfter": {
+                    "Get_prediction": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "Http_-_Custom_Solartis_Travel_Parser_API": {
+                "inputs": {
+                    "body": "@body('Get_Rate')",
+                    "method": "POST",
+                    "uri": "http://adam-test.azurewebsites.net/SolartisTravelParser?user=@{triggerBody()?['TweetedBy']}"
+                },
+                "runAfter": {
+                    "Get_Rate": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "Post_a_tweet": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['twitter']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/posttweet",
+                    "queries": {
+                        "tweetText": "@{body('Http_-_Custom_Solartis_Travel_Parser_API')}"
+                    }
+                },
+                "runAfter": {
+                    "Http_-_Custom_Solartis_Travel_Parser_API": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_new_tweet_is_posted": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['twitter']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/onnewtweet",
+                    "queries": {
+                        "searchQuery": "@@adamhack19"
+                    }
+                },
+                "recurrence": {
+                    "frequency": "Second",
+                    "interval": 30
+                },
+                "splitOn": "@triggerBody()?['value']",
+                "type": "ApiConnection"
+            }
+        }
+    }
+}
